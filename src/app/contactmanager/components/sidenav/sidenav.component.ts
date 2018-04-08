@@ -1,4 +1,9 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
+import { Observable } from 'rxjs/Observable';
+import { User } from '../../models/user';
+import { UserService } from '../../services/user.service';
+import { MatSidenav } from '@angular/material';
 
 const SMALL_WIDTH_BREAKPOINT = 720;
 @Component({
@@ -8,19 +13,45 @@ const SMALL_WIDTH_BREAKPOINT = 720;
 })
 export class SidenavComponent implements OnInit {
 
-  private mediaMatcher: MediaQueryList = matchMedia(`(max-width: ${SMALL_WIDTH_BREAKPOINT}px)`);
+  // --------- Properties
 
-  constructor(zone: NgZone) {
-    this.mediaMatcher.addListener(mql => {
-      zone.run(() => this.mediaMatcher = mql);
-    });
-  }
+    private mediaMatcher: MediaQueryList = matchMedia(`(max-width: ${SMALL_WIDTH_BREAKPOINT}px)`);
 
-  ngOnInit() {
-  }
+    users: Observable<User[]>;
 
-  isScreenSmall(): boolean {
-    return this.mediaMatcher.matches;
-  }
+    @ViewChild(MatSidenav) sidenav: MatSidenav;
+
+  // --------- Constructor
+
+    constructor(zone: NgZone, private userService: UserService, private router: Router) {
+      this.mediaMatcher.addListener(mql => {
+        zone.run(() => this.mediaMatcher = mql);
+      });
+    }
+
+  // --------- Lifecycle Hooks
+  
+    ngOnInit() {
+      this.users = this.userService.users;
+      this.userService.loadAll();
+
+      // this.users.subscribe(data => {
+      //   if (data.length > 0) {
+      //     this.router.navigate(['/contactmanager', data[0].id]);
+      //   }
+      // });
+
+      this.router.events.subscribe(() => {
+        if (this.isScreenSmall()) {
+          this.sidenav.close();
+        }
+      });
+    }
+
+  // --------- Methods
+
+    isScreenSmall(): boolean {
+      return this.mediaMatcher.matches;
+    }
 
 }
