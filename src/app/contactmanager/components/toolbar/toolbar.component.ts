@@ -13,6 +13,8 @@ export class ToolbarComponent implements OnInit {
   // ---------- Input/Output
 
     @Output() toggleSidenav = new EventEmitter<void>();
+    @Output() toggleTheme = new EventEmitter<void>();
+    @Output() toggleDir = new EventEmitter<void>();
 
   // ---------- Constructor
 

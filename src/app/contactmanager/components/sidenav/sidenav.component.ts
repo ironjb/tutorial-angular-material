@@ -16,10 +16,10 @@ export class SidenavComponent implements OnInit {
   // --------- Properties
 
     private mediaMatcher: MediaQueryList = matchMedia(`(max-width: ${SMALL_WIDTH_BREAKPOINT}px)`);
-
     users: Observable<User[]>;
-
     @ViewChild(MatSidenav) sidenav: MatSidenav;
+    isDarkTheme: boolean = false;
+    dir: string = 'ltr';
 
   // --------- Constructor
 
@@ -54,4 +54,14 @@ export class SidenavComponent implements OnInit {
       return this.mediaMatcher.matches;
     }
 
+    toggleTheme(): void {
+      this.isDarkTheme = !this.isDarkTheme;
+    }
+
+    toggleDir(): void {
+      this.dir = this.dir === 'ltr' ? 'rtl' : 'ltr';
+
+      // // Was only needed for previous bug when switching from ltr<=>rtl
+      // this.sidenav.toggle().then(() => { this.sidenav.toggle(); });
+    }
 }
